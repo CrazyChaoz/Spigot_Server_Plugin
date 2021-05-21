@@ -17,5 +17,16 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../BukkitBuildTools/Spigot/Spigot-Server/target/spigot-1.16.5-R0.1-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../BukkitBuildTools/Spigot/Spigot-Server/target/spigot-1.16.5-R0.1-SNAPSHOT.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>
