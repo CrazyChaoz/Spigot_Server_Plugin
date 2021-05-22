@@ -1,13 +1,21 @@
-package at.crazychaoz.enhanced_survival;
+package at.crazychaoz.enhanced_survival.quest_blaze;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public class InventoryClicked {
+public class QuestBlazeInventoryClicked implements Listener {
+
+    private QuestBlaze questBlaze;
+
+    public QuestBlazeInventoryClicked(QuestBlaze questBlaze) {
+        this.questBlaze = questBlaze;
+    }
 
     @EventHandler
     public void onClick(InventoryClickEvent event) {
+        if(!event.getClickedInventory().equals(questBlaze.inventory))return;
         if (event.getCurrentItem() == null) return;
         if (event.getCurrentItem().getItemMeta() == null) return;
         if (event.getCurrentItem().getItemMeta().getDisplayName() == null) return;
@@ -16,5 +24,8 @@ public class InventoryClicked {
 
         Player player=(Player) event.getWhoClicked();
 
+        if(event.getSlot() == 0){
+
+        }
     }
 }
