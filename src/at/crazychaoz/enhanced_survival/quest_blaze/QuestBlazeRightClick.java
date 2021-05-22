@@ -16,7 +16,6 @@ public class QuestBlazeRightClick implements Listener {
     @EventHandler
     public void toggle(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
-
         if (event.getRightClicked().getUniqueId().equals(questBlaze.getUniqueID()))
             player.openInventory(questBlaze.inventory);
     }
