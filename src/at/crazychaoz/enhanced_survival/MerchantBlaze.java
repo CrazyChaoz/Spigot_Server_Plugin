@@ -2,15 +2,20 @@ package at.crazychaoz.enhanced_survival;
 
 import net.minecraft.server.v1_16_R3.*;
 
-public class MerchantBlaze extends EntityVillager {
+public class MerchantBlaze extends EntityCreature{
 
 
-    public MerchantBlaze(EntityTypes<? extends EntityVillager> entitytypes, World world) {
-        super(entitytypes, world);
+    public MerchantBlaze(World world) {
+        super(EntityTypes.BLAZE, world);
+        setSilent(true);
+        setInvulnerable(true);
+        setCustomName(new ChatMessage("Merchy"));
+        setCustomNameVisible(true);
+        setNoGravity(true);
     }
 
     @Override
-    public void openTrade(EntityHuman entityhuman, IChatBaseComponent ichatbasecomponent, int i) {
-        super.openTrade(entityhuman, ichatbasecomponent, i);
+    protected void initPathfinder() {
+        this.goalSelector.a(0,new PathfinderGoalLookAtPlayer(this,EntityHuman.class,8.0F));
     }
 }

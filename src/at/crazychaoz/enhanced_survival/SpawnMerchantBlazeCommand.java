@@ -1,9 +1,6 @@
 package at.crazychaoz.enhanced_survival;
 
-import net.minecraft.server.v1_16_R3.ChatMessage;
-import net.minecraft.server.v1_16_R3.EntityTypes;
-import net.minecraft.server.v1_16_R3.EntityVillager;
-import net.minecraft.server.v1_16_R3.WorldServer;
+import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 
 public class SpawnMerchantBlazeCommand implements CommandExecutor, Listener {
     @Override
@@ -21,11 +19,9 @@ public class SpawnMerchantBlazeCommand implements CommandExecutor, Listener {
             Location location = player.getLocation();
 
             if (command.getName().equalsIgnoreCase("blaze_merchant")) {
-                EntityVillager merchy = new MerchantBlaze(EntityTypes.VILLAGER, world);
-                merchy.setCustomName(new ChatMessage("Merchy"));
-                merchy.setCustomNameVisible(true);
+                Entity merchy = new MerchantBlaze(world);
                 merchy.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-                world.addEntity(merchy);
+                world.addEntity(merchy, CreatureSpawnEvent.SpawnReason.COMMAND);
             }
         }
 
