@@ -11,6 +11,7 @@ import java.util.List;
 public class QuestBlaze extends EntityCreature {
 
     public Inventory inventory;
+    private List<QuestBlazeRecipe> recipes;
 
     public QuestBlaze(World world) {
         super(EntityTypes.BLAZE, world);
@@ -30,10 +31,14 @@ public class QuestBlaze extends EntityCreature {
 
     public void setCustomInventory(List<QuestBlazeRecipe> items) {
         inventory = Bukkit.createInventory(null, 9 + (items.size() / 9), ChatColor.RED + "" + ChatColor.BOLD + "Sacrifice your Items");
+        recipes = items;
 
-        inventory.setMaxStackSize(27);
         for (int i = 0; i < items.size(); i++) {
             inventory.setItem(i, items.get(i).getTriggerItem());
         }
+    }
+
+    public List<QuestBlazeRecipe> getRecipes() {
+        return recipes;
     }
 }
