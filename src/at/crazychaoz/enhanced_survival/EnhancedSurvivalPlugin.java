@@ -11,9 +11,9 @@ public class EnhancedSurvivalPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getCommand("blaze_merchant").setExecutor(new SpawnMerchantBlazeCommand());
+        getCommand("quest_blaze").setExecutor(new SpawnQuestBlazeCommand(this));
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN+"Enhanced Survival Plugin enabled");
-        //getServer().getPluginManager().registerEvents();
+
     }
 }
 
