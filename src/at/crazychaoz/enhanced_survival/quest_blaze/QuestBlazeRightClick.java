@@ -1,4 +1,4 @@
-package at.crazychaoz.enhanced_survival;
+package at.crazychaoz.enhanced_survival.quest_blaze;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,7 +17,7 @@ public class QuestBlazeRightClick implements Listener {
     public void toggle(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
 
-        //if (event.getRightClicked() instanceof QuestBlaze)
+        if (event.getRightClicked().getUniqueId().equals(questBlaze.getUniqueID()))
             player.openInventory(questBlaze.inventory);
     }
 

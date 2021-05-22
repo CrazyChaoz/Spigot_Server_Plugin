@@ -1,4 +1,4 @@
-package at.crazychaoz.enhanced_survival;
+package at.crazychaoz.enhanced_survival.quest_blaze;
 
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
@@ -31,8 +31,11 @@ public class SpawnQuestBlazeCommand implements CommandExecutor, Listener {
             if (command.getName().equalsIgnoreCase("quest_blaze")) {
                 QuestBlaze questy = new QuestBlaze(world);
                 questy.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+                questy.setCustomInventory(QuestBlazeRecipe.DEFAULT_RECIPES);
+
                 world.addEntity(questy, CreatureSpawnEvent.SpawnReason.COMMAND);
                 enhancedSurvivalPlugin.getServer().getPluginManager().registerEvents(new QuestBlazeRightClick(questy),enhancedSurvivalPlugin);
+                enhancedSurvivalPlugin.getServer().getPluginManager().registerEvents(new QuestBlazeInventoryClicked(questy),enhancedSurvivalPlugin);
             }
         }
 
