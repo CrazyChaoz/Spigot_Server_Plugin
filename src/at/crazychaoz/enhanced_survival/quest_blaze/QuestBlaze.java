@@ -11,7 +11,7 @@ public class QuestBlaze extends EntityCreature {
         setCustomName(new ChatMessage("Questy"));
         setCustomNameVisible(true);
         setNoGravity(true);
-
+        lootTableKey=new MinecraftKey("");
     }
 
     @Override

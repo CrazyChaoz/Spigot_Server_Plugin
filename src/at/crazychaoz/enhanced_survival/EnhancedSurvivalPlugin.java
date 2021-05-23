@@ -3,6 +3,8 @@ package at.crazychaoz.enhanced_survival;
 import at.crazychaoz.enhanced_survival.quest_blaze.QuestBlaze;
 import at.crazychaoz.enhanced_survival.quest_blaze.QuestBlazeInventory;
 import at.crazychaoz.enhanced_survival.quest_blaze.SpawnQuestBlazeCommand;
+import net.minecraft.server.v1_16_R3.DamageSource;
+import net.minecraft.server.v1_16_R3.Entity;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,7 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class EnhancedSurvivalPlugin extends JavaPlugin {
-    private static final String VERSION = "0.0.11";
+    private static final String VERSION = "0.0.12";
     public final HashMap<String, QuestBlazeInventory> inventories = new HashMap<>();
     public final ArrayList<QuestBlaze> livingBlazes = new ArrayList<>();
 
@@ -23,6 +25,7 @@ public class EnhancedSurvivalPlugin extends JavaPlugin {
     public void onDisable() {
         writeToFile();
         //kill all questblazes
+        livingBlazes.forEach(Entity::die);
     }
 
     @Override
