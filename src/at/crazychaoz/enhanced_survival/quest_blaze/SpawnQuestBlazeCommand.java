@@ -1,6 +1,7 @@
 package at.crazychaoz.enhanced_survival.quest_blaze;
 
-import net.minecraft.server.v1_16_R3.*;
+import at.crazychaoz.enhanced_survival.EnhancedSurvivalPlugin;
+import net.minecraft.server.v1_16_R3.WorldServer;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,14 +10,13 @@ import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 
 public class SpawnQuestBlazeCommand implements CommandExecutor, Listener {
 
-    private final JavaPlugin enhancedSurvivalPlugin;
+    private final EnhancedSurvivalPlugin enhancedSurvivalPlugin;
 
-    public SpawnQuestBlazeCommand(JavaPlugin enhancedSurvivalPlugin) {
+    public SpawnQuestBlazeCommand(EnhancedSurvivalPlugin enhancedSurvivalPlugin) {
         this.enhancedSurvivalPlugin = enhancedSurvivalPlugin;
     }
 
@@ -31,11 +31,10 @@ public class SpawnQuestBlazeCommand implements CommandExecutor, Listener {
             if (command.getName().equalsIgnoreCase("quest_blaze")) {
                 QuestBlaze questy = new QuestBlaze(world);
                 questy.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-                questy.setCustomInventory(QuestBlazeRecipe.DEFAULT_RECIPES);
-
+                enhancedSurvivalPlugin.livingBlazes.add(questy);
                 world.addEntity(questy, CreatureSpawnEvent.SpawnReason.COMMAND);
-                enhancedSurvivalPlugin.getServer().getPluginManager().registerEvents(new QuestBlazeRightClick(questy),enhancedSurvivalPlugin);
-                enhancedSurvivalPlugin.getServer().getPluginManager().registerEvents(new QuestBlazeInventoryClicked(questy),enhancedSurvivalPlugin);
+                enhancedSurvivalPlugin.getServer().getPluginManager().registerEvents(new QuestBlazeRightClick(questy, enhancedSurvivalPlugin), enhancedSurvivalPlugin);
+                enhancedSurvivalPlugin.getServer().getPluginManager().registerEvents(new QuestBlazeInventoryClicked(enhancedSurvivalPlugin), enhancedSurvivalPlugin);
             }
         }
 
