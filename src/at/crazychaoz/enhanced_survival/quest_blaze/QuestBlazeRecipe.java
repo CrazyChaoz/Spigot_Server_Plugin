@@ -2,11 +2,15 @@ package at.crazychaoz.enhanced_survival.quest_blaze;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class QuestBlazeRecipe {
 
@@ -27,11 +31,11 @@ public class QuestBlazeRecipe {
         List<ItemStack> itemsToHandIn=new ArrayList<>();
 
         ItemStack itemsToHandIn0=new ItemStack(Material.DIRT);
-        itemsToHandIn0.setAmount(64);
+        itemsToHandIn0.setAmount(70);
         itemsToHandIn.add(itemsToHandIn0);
 
-        ItemStack itemsToHandIn1=new ItemStack(Material.DIRT);
-        itemsToHandIn1.setAmount(64);
+        ItemStack itemsToHandIn1=new ItemStack(Material.NETHER_STAR);
+        itemsToHandIn1.setAmount(5);
         itemsToHandIn.add(itemsToHandIn1);
 
         DEFAULT_RECIPES.add(new QuestBlazeRecipe(item,itemsToHandIn));
@@ -43,6 +47,7 @@ public class QuestBlazeRecipe {
 
     private ItemStack triggerItem;
     private List<ItemStack> items;
+    private Predicate<Player> onSuccessFunction;
 
     public QuestBlazeRecipe(ItemStack triggerItem, List<ItemStack> items) {
         this.triggerItem = triggerItem;

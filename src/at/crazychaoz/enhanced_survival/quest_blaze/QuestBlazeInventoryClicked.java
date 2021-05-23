@@ -1,5 +1,6 @@
 package at.crazychaoz.enhanced_survival.quest_blaze;
 
+import at.crazychaoz.enhanced_survival.EnhancedSurvivalPlugin;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,51 +11,34 @@ import java.util.List;
 
 public class QuestBlazeInventoryClicked implements Listener {
 
-    private QuestBlaze questBlaze;
+    private final EnhancedSurvivalPlugin plugin;
 
-    public QuestBlazeInventoryClicked(QuestBlaze questBlaze) {
-        this.questBlaze = questBlaze;
+    public QuestBlazeInventoryClicked(EnhancedSurvivalPlugin plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler
     public void onClick(InventoryClickEvent event) {
-        if (!event.getClickedInventory().equals(questBlaze.inventory)) return;
-        if (event.getCurrentItem() == null) return;
-        if (event.getCurrentItem().getItemMeta() == null) return;
-        if (event.getCurrentItem().getItemMeta().getDisplayName() == null) return;
-
-        event.setCancelled(true);
-
         Player player = (Player) event.getWhoClicked();
 
-        boolean handInStatus;
-        switch (event.getSlot()) {
-            case 0:
-                handInStatus = tryToHandInItems(event, questBlaze.getRecipes().get(0).getItems());
-                break;
-//            case 1:
-//                handInStatus = tryToHandInItems(event, questBlaze.getRecipes().get(1).getItems());
-//                break;
-            default:
-                return;
+        if (event.getCurrentItem() == null) return;
+        if (event.getCurrentItem().getItemMeta() == null) return;
+        if (!plugin.inventories.containsKey(player.getName())) return;
+        if (!plugin.inventories.get(player.getName()).inventory.equals(event.getClickedInventory())) return;
+        event.setCancelled(true);
+        QuestBlazeInventory inventory = plugin.inventories.get(player.getName());
+        int invsize = inventory.inventory.getSize();
+        if (event.getSlot() < invsize) {
+            List<ItemStack> itemsToHandIn = inventory.getRecipes().get(event.getSlot()).getItems();
+            boolean playerHasAllItems = itemsToHandIn.stream().allMatch(itemStack -> player.getInventory().contains(itemStack.getType(), itemStack.getAmount()));
+            if (playerHasAllItems) {
+                //onHandInSuccess
+                player.sendMessage("NAISUUUUU");
+                itemsToHandIn.forEach(itemStack -> player.getInventory().remove(itemStack.getType()));
+            } else {
+                //onHandInFail
+                player.sendMessage("OH HELL NAW");
+            }
         }
-
-        if (handInStatus) {
-            onHandInSuccess();
-        } else {
-            onHandInFail();
-        }
-    }
-
-    public boolean tryToHandInItems(InventoryClickEvent event, List<ItemStack> itemsToHandIn) {
-
-
-        return false;
-    }
-
-    private void onHandInSuccess() {
-    }
-
-    private void onHandInFail() {
     }
 }
