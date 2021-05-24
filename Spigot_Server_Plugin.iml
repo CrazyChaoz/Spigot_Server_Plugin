@@ -8,24 +8,24 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="groovy-3.0.8" level="application" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/spigot-api-1.16.5-R0.1-20210519.225132-83.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../BukkitBuildTools/Spigot/Spigot-Server/target/spigot-1.16.5-R0.1-SNAPSHOT.jar!/" />
+          <root url="jar://$MODULE_DIR$/jars/spigot-1.16.5-R0.1-SNAPSHOT.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../BukkitBuildTools/Spigot/Spigot-Server/target/spigot-1.16.5-R0.1-SNAPSHOT.jar!/" />
+          <root url="jar://$MODULE_DIR$/jars/spigot-1.16.5-R0.1-SNAPSHOT.jar!/" />
         </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/jars/spigot-api-1.16.5-R0.1-20210519.225132-83.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
       </library>
     </orderEntry>
   </component>
