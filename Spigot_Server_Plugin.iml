@@ -28,5 +28,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="spigot-api-1.17-R0.1-SNAPSHOT-shaded" level="project" />
+    <orderEntry type="library" name="spigot-1.17-R0.1-SNAPSHOT-remapped" level="project" />
   </component>
 </module>
