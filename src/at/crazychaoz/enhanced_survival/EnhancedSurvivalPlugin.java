@@ -4,8 +4,11 @@ import at.crazychaoz.enhanced_survival.quest_blaze.*;
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -13,14 +16,14 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class EnhancedSurvivalPlugin extends JavaPlugin {
-    private static final String VERSION = "0.0.12";
+    private static final String VERSION = "1.0.0";
     public final HashMap<String, QuestBlazeInventory> inventories = new HashMap<>();
     public final ArrayList<QuestBlaze> livingBlazes = new ArrayList<>();
 
@@ -36,40 +39,76 @@ public class EnhancedSurvivalPlugin extends JavaPlugin {
     public void onEnable() {
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "Enhanced Survival Plugin v" + VERSION + " enabled");
         getCommand("quest_blaze").setExecutor(new SpawnQuestBlazeCommand(this));
+        this.getServer().getPluginManager().registerEvents(new QuestBlazeInventoryClicked(this), this);
         readFromFile();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "nullable"})
     private void readFromFile() {
         try {
-            String file = Files.readAllLines(Paths.get("enhanced_survival_plugin.data")).get(0);
+            FileReader reader = new FileReader("enhanced_survival_plugin.data");
             JSONParser parser = new JSONParser();
-            JSONObject topLevelObject = (JSONObject) parser.parse(file);
-            getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "Read File " + topLevelObject.get("version") + "");
+            JSONObject topLevelObject = (JSONObject) parser.parse(reader);
+            getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "Read File from Version " + topLevelObject.get("version") + "");
 
             ((JSONArray) topLevelObject.get("livingBlazes")).forEach(blazeDataUncast -> {
                 JSONObject blazeData = (JSONObject) blazeDataUncast;
-                spawn_quest_blaze((CraftWorld) getServer().getWorld(
-                        UUID.fromString((String) blazeData.get("world"))),
+                spawn_quest_blaze(
+                        (CraftWorld) getServer().getWorld(UUID.fromString((String) blazeData.get("world"))),
                         UUID.fromString((String) blazeData.get("world")),
                         Double.parseDouble((String) blazeData.get("locX")),
-                        Double.parseDouble((String) blazeData.get("locX")),
-                        Double.parseDouble((String) blazeData.get("locX")),
+                        Double.parseDouble((String) blazeData.get("locY")),
+                        Double.parseDouble((String) blazeData.get("locZ")),
                         Float.parseFloat((String) blazeData.get("YRot")),
                         Float.parseFloat((String) blazeData.get("XRot")));
-
             });
 
-            ((JSONArray) topLevelObject.get("inventories")).forEach(questBlazeInventoryUncast -> {
-                JSONObject questBlazeInventory = (JSONObject) questBlazeInventoryUncast;
-                QuestBlazeInventory reconstructedInventory=new QuestBlazeInventory();
+            JSONArray inventoriesJson = (JSONArray) topLevelObject.get("inventories");
+            if (!inventoriesJson.isEmpty()) {
+                inventoriesJson.forEach(invUncast -> {
+                    JSONObject inv = (JSONObject) invUncast;
 
-                //TODO: implement inventory reconstruction, now it restocks at serverstart
+                    QuestBlazeInventory reconstructedInventory = new QuestBlazeInventory();
 
-                inventories.put((String) questBlazeInventory.get("user"),reconstructedInventory);
-            });
+                    List<QuestBlazeRecipe> recipeList = new ArrayList<>();
 
-        } catch (IOException | ParseException e) {
+                    ((JSONArray) inv.get("recipe")).forEach(recipeJsonUncast -> {
+
+                        JSONObject recipeJson = (JSONObject) recipeJsonUncast;
+
+                        ItemStack triggeritem = new ItemStack(Material.getMaterial((String) recipeJson.get("triggeritem_key")), Integer.parseInt((String) recipeJson.get("triggeritem_amount")));
+
+                        ItemMeta meta = triggeritem.getItemMeta();
+
+                        meta.setDisplayName((String) recipeJson.get("triggeritem_displayname"));
+
+                        JSONArray loreLines = (JSONArray) recipeJson.get("triggeritem_lore");
+
+                        meta.setLore(loreLines);
+
+                        triggeritem.setItemMeta(meta);
+
+                        List<ItemStack> itemList = new ArrayList<>();
+
+                        ((JSONArray) recipeJson.get("handin_items")).forEach(singleHandInItemUncast -> {
+                            JSONObject singleHandInItemJson = (JSONObject) singleHandInItemUncast;
+                            ItemStack singleHandInItem = new ItemStack(Material.getMaterial((String) singleHandInItemJson.get("handin_key")), Integer.parseInt((String) singleHandInItemJson.get("handin_amount")));
+                            itemList.add(singleHandInItem);
+                        });
+
+                        recipeList.add(new QuestBlazeRecipe(triggeritem, itemList));
+                    });
+
+                    reconstructedInventory.setCustomInventory(recipeList);
+                    inventories.put((String) inv.get("user"), reconstructedInventory);
+                });
+            }
+
+        } catch (FileNotFoundException | NoSuchFileException fileNotFound) {
+            System.out.println("file not found, starting from empty data");
+            //fileNotFoundException.printStackTrace();
+        } catch
+        (IOException | ParseException e) {
             e.printStackTrace();
         }
 
@@ -126,40 +165,43 @@ public class EnhancedSurvivalPlugin extends JavaPlugin {
             blazeData.put("locZ", questBlaze.locZ() + "");
             blazeData.put("YRot", questBlaze.getYRot() + "");
             blazeData.put("XRot", questBlaze.getXRot() + "");
-            livingBlazeJson.add(blazeData.toJSONString());
+            livingBlazeJson.add(blazeData);
         });
-        topLevelObject.put("livingBlazes", livingBlazeJson.toJSONString());
+        topLevelObject.put("livingBlazes", livingBlazeJson);
 
         JSONArray inventoryJson = new JSONArray();
         inventories.forEach((s, questBlazeInventory) -> {
             JSONObject inv = new JSONObject();
             inv.put("user", s);
-            JSONArray questBlazeJson = new JSONArray();
+            JSONArray itemJson = new JSONArray();
             questBlazeInventory.getRecipes().forEach(questBlazeRecipe -> {
                 JSONObject recipeJson = new JSONObject();
                 recipeJson.put("triggeritem_namespace", questBlazeRecipe.getTriggerItem().getType().getKey().getNamespace());
-                recipeJson.put("triggeritem_key", questBlazeRecipe.getTriggerItem().getType().getKey().getKey());
+                recipeJson.put("triggeritem_key", questBlazeRecipe.getTriggerItem().getType().name());
                 recipeJson.put("triggeritem_amount", questBlazeRecipe.getTriggerItem().getAmount() + "");
-                recipeJson.put("triggeritem_name", questBlazeRecipe.getTriggerItem().getItemMeta().getDisplayName());
+                recipeJson.put("triggeritem_displayname", questBlazeRecipe.getTriggerItem().getItemMeta().getDisplayName());
                 JSONArray loreLines = new JSONArray();
                 loreLines.addAll(questBlazeRecipe.getTriggerItem().getItemMeta().getLore());
-                recipeJson.put("triggeritem_lore", loreLines.toJSONString());
-                JSONArray questBlazeRecipeJson = new JSONArray();
+                recipeJson.put("triggeritem_lore", loreLines);
+                JSONArray handInItemJson = new JSONArray();
                 questBlazeRecipe.getItems().forEach(itemStack -> {
-                    JSONObject questBlazeHandInItem = new JSONObject();
-                    questBlazeHandInItem.put("handin_namespace", questBlazeRecipe.getTriggerItem().getType().getKey().getNamespace());
-                    questBlazeHandInItem.put("handin_key", questBlazeRecipe.getTriggerItem().getType().getKey().getKey());
-                    questBlazeHandInItem.put("handin_amount", questBlazeRecipe.getTriggerItem().getAmount() + "");
-                    questBlazeRecipeJson.add(questBlazeHandInItem.toJSONString());
+                    JSONObject singleHandInItem = new JSONObject();
+                    singleHandInItem.put("handin_namespace", itemStack.getType().getKey().getNamespace());
+                    singleHandInItem.put("handin_key", itemStack.getType().name());
+                    singleHandInItem.put("handin_amount", itemStack.getAmount() + "");
+                    handInItemJson.add(singleHandInItem);
                 });
-                questBlazeJson.add(recipeJson.toJSONString());
+                recipeJson.put("handin_items", handInItemJson);
+                itemJson.add(recipeJson);
             });
-            inventoryJson.add(inv.toJSONString());
+            inv.put("recipe", itemJson);
+            inventoryJson.add(inv);
         });
-        topLevelObject.put("inventories", inventoryJson.toJSONString());
+        topLevelObject.put("inventories", inventoryJson);
+
 
         try (BufferedWriter fileOutputStream = new BufferedWriter(new FileWriter("enhanced_survival_plugin.data"))) {
-            fileOutputStream.write(topLevelObject.toJSONString());
+            topLevelObject.writeJSONString(fileOutputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -170,12 +212,12 @@ public class EnhancedSurvivalPlugin extends JavaPlugin {
     }
 
     public void spawn_quest_blaze(CraftWorld world, UUID worldUuid, double locX, double locY, double locZ, float yaw, float pitch) {
-        QuestBlaze questy = new QuestBlaze(world.getHandle(), worldUuid);
+        QuestBlaze questy = new QuestBlaze(world.getHandle(), worldUuid,this);
         questy.setLocation(locX, locY, locZ, yaw, pitch);
         this.livingBlazes.add(questy);
         world.addEntity(questy, CreatureSpawnEvent.SpawnReason.COMMAND);
+
         this.getServer().getPluginManager().registerEvents(new QuestBlazeRightClick(questy, this), this);
-        this.getServer().getPluginManager().registerEvents(new QuestBlazeInventoryClicked(this), this);
     }
 }
 

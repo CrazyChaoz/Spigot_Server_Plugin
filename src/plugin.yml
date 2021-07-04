@@ -1,10 +1,10 @@
 name: EnhancedSurvivalPlugin
-version: 0.0.8
-author: //the author's name
+version: 1.0.0
+author: crazychaoz
 main: at.crazychaoz.enhanced_survival.EnhancedSurvivalPlugin
-api-version: 1.16
+api-version: 1.17
 commands:
   quest_blaze:
-    description: Spawns the Quest Blaze
-    useage: just use it
+    description: Spawns a Quest Blaze
+    useage: just do it
 

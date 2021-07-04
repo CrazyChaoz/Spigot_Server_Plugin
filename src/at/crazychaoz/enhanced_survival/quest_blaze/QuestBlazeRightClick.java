@@ -4,17 +4,10 @@ import at.crazychaoz.enhanced_survival.EnhancedSurvivalPlugin;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
-public class QuestBlazeRightClick implements Listener {
-
-    private final QuestBlaze questBlaze;
-    private final EnhancedSurvivalPlugin plugin;
-
-    public QuestBlazeRightClick(QuestBlaze blaze, EnhancedSurvivalPlugin plugin) {
-        this.questBlaze = blaze;
-        this.plugin = plugin;
-    }
+public record QuestBlazeRightClick(QuestBlaze questBlaze,EnhancedSurvivalPlugin plugin) implements Listener {
 
     @EventHandler
     public void toggle(PlayerInteractEntityEvent event) {
@@ -24,9 +17,15 @@ public class QuestBlazeRightClick implements Listener {
                 plugin.inventories.put(player.getName(), new QuestBlazeInventory());
             }
             player.openInventory(plugin.inventories.get(player.getName()).inventory);
-
         }
-
     }
+
+//    @EventHandler
+//    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+//        if (event.getEntity().equals(questBlaze) ) {
+//            event.setCancelled(true);
+//        }
+//    }
+
 
 }

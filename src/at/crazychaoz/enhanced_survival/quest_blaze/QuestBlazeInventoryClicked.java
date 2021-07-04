@@ -9,13 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class QuestBlazeInventoryClicked implements Listener {
-
-    private final EnhancedSurvivalPlugin plugin;
-
-    public QuestBlazeInventoryClicked(EnhancedSurvivalPlugin plugin) {
-        this.plugin = plugin;
-    }
+public record QuestBlazeInventoryClicked(EnhancedSurvivalPlugin plugin) implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent event) {
@@ -29,12 +23,14 @@ public class QuestBlazeInventoryClicked implements Listener {
         QuestBlazeInventory inventory = plugin.inventories.get(player.getName());
         int invsize = inventory.inventory.getSize();
         if (event.getSlot() < invsize) {
-            List<ItemStack> itemsToHandIn = inventory.getRecipes().get(event.getSlot()).getItems();
+            QuestBlazeRecipe recipe= inventory.getRecipes().get(event.getSlot());
+            List<ItemStack> itemsToHandIn = recipe.getItems();
             boolean playerHasAllItems = itemsToHandIn.stream().allMatch(itemStack -> player.getInventory().contains(itemStack.getType(), itemStack.getAmount()));
             if (playerHasAllItems) {
                 //onHandInSuccess
                 player.sendMessage("NAISUUUUU");
-                itemsToHandIn.forEach(itemStack -> player.getInventory().remove(itemStack.getType()));
+                itemsToHandIn.forEach(itemStack -> player.getInventory().removeItem(itemStack));
+                recipe.onSuccess(player);
             } else {
                 //onHandInFail
                 player.sendMessage("OH HELL NAW");
