@@ -31,6 +31,9 @@ public record QuestBlazeInventoryClicked(EnhancedSurvivalPlugin plugin) implemen
                 player.sendMessage("NAISUUUUU");
                 itemsToHandIn.forEach(itemStack -> player.getInventory().removeItem(itemStack));
                 recipe.onSuccess(player);
+                if(plugin.removeFinishedQuests){
+                    inventory.getRecipes().remove(recipe);
+                }
             } else {
                 //onHandInFail
                 player.sendMessage("OH HELL NAW");

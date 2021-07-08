@@ -26,6 +26,7 @@ public class EnhancedSurvivalPlugin extends JavaPlugin {
     private static final String VERSION = "1.0.0";
     public final HashMap<String, QuestBlazeInventory> inventories = new HashMap<>();
     public final ArrayList<QuestBlaze> livingBlazes = new ArrayList<>();
+    public final boolean removeFinishedQuests=true;
 
 
     @Override
