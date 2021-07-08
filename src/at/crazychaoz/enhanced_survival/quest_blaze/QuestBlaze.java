@@ -10,13 +10,10 @@ import net.minecraft.world.entity.ai.attributes.GenericAttributes;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalLookAtPlayer;
 import net.minecraft.world.entity.player.EntityHuman;
 import net.minecraft.world.level.World;
-import org.bukkit.attribute.Attributable;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
 
 import java.util.UUID;
 
-public class QuestBlaze extends EntityCreature{
+public class QuestBlaze extends EntityCreature {
     private final UUID worldUuid;
     private final EnhancedSurvivalPlugin plugin;
 
@@ -29,15 +26,14 @@ public class QuestBlaze extends EntityCreature{
         setCustomNameVisible(true);
         setNoGravity(true);
 
-        //setNoAI(true);
 
         getAttributeInstance(GenericAttributes.d).setValue(0);
         getAttributeInstance(GenericAttributes.c).setValue(100);
 
-        cb=new MinecraftKey("");
+        cb = new MinecraftKey("");
 
-        this.worldUuid=worldUuid;
-        this.plugin=plugin;
+        this.worldUuid = worldUuid;
+        this.plugin = plugin;
     }
 
     public UUID getWorldUuid() {

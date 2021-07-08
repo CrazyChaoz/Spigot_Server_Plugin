@@ -45,12 +45,9 @@ public class QuestBlazeRecipe {
 
     }
 
-    private ItemStack triggerItem;
-    private List<ItemStack> items;
-    private Consumer<Player> onSuccessFunction = player -> {
-        AttributeInstance ai = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-        ai.setBaseValue(ai.getBaseValue() + 2);
-    };
+    private final ItemStack triggerItem;
+    private final List<ItemStack> items;
+    private Consumer<Player> onSuccessFunction = new QuestBlazeQuestRewardFunction();
 
     public QuestBlazeRecipe(ItemStack triggerItem, List<ItemStack> items) {
         this.triggerItem = triggerItem;
